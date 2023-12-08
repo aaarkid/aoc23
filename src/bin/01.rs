@@ -3,84 +3,104 @@ advent_of_code::solution!(1);
 pub fn part_one(input: &str) -> Option<u32> {
     let mut sum: u32 = 0;
     for line in input.lines() {
-        let mut first: i8 = -1;
-        let mut last: u8 = 0;
+        let mut first: u32 = 0;
+        let mut last: u32 = 0;
         for char in line.chars() {
             match char {
                 '0'..='9' => {
-                    if first == -1 {
-                        first = char.to_digit(10).unwrap() as i8;
-                        last = first as u8;
+                    if first == 0 {
+                        first = char.to_digit(10).unwrap();
+                        last = first;
                     } else {
-                        last = char.to_digit(10).unwrap() as u8;
+                        last = char.to_digit(10).unwrap();
                     }
                 }
                 _ => {}
             }
         }
         println!("{}{}", first, last);
-        sum += (first as u8 * 10 + last) as u32;
+        sum += first * 10 + last;
     }
 
-    println!("Sum: {}", sum);
+    println!("{}", sum);
 
-    None
+    Some(sum)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    use regex::Regex;
-    use std::collections::HashMap;
+
+    fn find_word<'a>(line: &str, key: &str, value: &'a str) -> Vec<(usize, &'a str)>  
+    {
+        let mut positions: Vec<(usize, &str)> = Vec::new();
+        if line.contains(key) {
+            let mut start = 0;
+            while let Some(pos) = line[start..].find(key) {
+                let pos = pos + start;
+                positions.push((pos, value));
+                start = pos + 1;
+            }
+        }
+
+        positions
+    }
+
     
-    fn replace_line(line: &str, word_to_digit: &HashMap<&str, &str>, re: &Regex) -> String {
-        let mut new_line = String::new();
-        for key in word_to_digit.keys() {
-            new_line = re.replace_all(line, |caps: &regex::Captures| {
-                format!("{}{}", word_to_digit[key], &caps[0])
-            }).to_string();
+    fn find_numbers(line: &str, word_to_digit: &Vec<(&str, &str)>) -> String {
+        let mut positions: Vec<(usize, &str)> = Vec::new();
+        for (key, value) in word_to_digit {
+            positions.extend(find_word(line, key, value)); 
+        }
+
+        positions.sort_by(|a, b| a.0.cmp(&b.0));
+
+        let mut new_line: String = line.to_string();
+        let mut inc = 0; 
+        for (pos, value) in positions {
+            let pos = pos + inc;
+            new_line.insert(pos, value.chars().next().unwrap());
+            inc += 1;
         }
 
         new_line
     }
 
-    let mut word_to_digit: HashMap<&str, &str> = HashMap::new();
-    word_to_digit.insert("one", "1");
-    word_to_digit.insert("two", "2");
-    word_to_digit.insert("three", "3");
-    word_to_digit.insert("four", "4");
-    word_to_digit.insert("five", "5");
-    word_to_digit.insert("six", "6");
-    word_to_digit.insert("seven", "7");
-    word_to_digit.insert("eight", "8");
-    word_to_digit.insert("nine", "9");
-
-    let pattern = format!("({})", word_to_digit.keys().map(|x| *x).collect::<Vec<&str>>().join("|"));
-    let re: Regex = Regex::new(&pattern).unwrap();
+    let mut word_to_digit: Vec<(&str, &str)> = Vec::new();
+    word_to_digit.push(("one", "1"));
+    word_to_digit.push(("two", "2"));
+    word_to_digit.push(("three", "3"));
+    word_to_digit.push(("four", "4"));
+    word_to_digit.push(("five", "5"));
+    word_to_digit.push(("six", "6"));
+    word_to_digit.push(("seven", "7"));
+    word_to_digit.push(("eight", "8"));
+    word_to_digit.push(("nine", "9"));
 
     let mut sum: u32 = 0;
     for line in input.lines() {
-        let line = replace_line(line, &word_to_digit, &re);
-        let mut first: i8 = -1;
-        let mut last: u8 = 0;
+        let line = find_numbers(line, &word_to_digit);
+        println!("{}", line);
+        let mut first: u32 = 0;
+        let mut last: u32 = 0;
         for char in line.chars() {
             match char {
                 '0'..='9' => {
-                    if first == -1 {
-                        first = char.to_digit(10).unwrap() as i8;
-                        last = first as u8;
+                    if first == 0 {
+                        first = char.to_digit(10).unwrap();
+                        last = first;
                     } else {
-                        last = char.to_digit(10).unwrap() as u8;
+                        last = char.to_digit(10).unwrap();
                     }
                 }
                 _ => {}
             }
         }
         println!("{}{}", first, last);
-        sum += (first as u8 * 10 + last) as u32;
+        sum += first * 10 + last;
     }
 
-    println!("Sum: {}", sum);
+    println!("{}", sum);
 
-    None
+    Some(sum)
 }
 
 #[cfg(test)]
@@ -89,13 +109,13 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        let result = part_one(&advent_of_code::template::read_file_part("examples", DAY,1));
+        assert_eq!(result, Some(142));
     }
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        let result = part_two(&advent_of_code::template::read_file_part("examples", DAY,2));
+        assert_eq!(result, Some(281));
     }
 }
