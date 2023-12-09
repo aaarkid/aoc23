@@ -18,7 +18,6 @@ pub fn part_one(input: &str) -> Option<u32> {
                 _ => {}
             }
         }
-        println!("{}{}", first, last);
         sum += first * 10 + last;
     }
 
@@ -78,7 +77,6 @@ pub fn part_two(input: &str) -> Option<u32> {
     let mut sum: u32 = 0;
     for line in input.lines() {
         let line = find_numbers(line, &word_to_digit);
-        println!("{}", line);
         let mut first: u32 = 0;
         let mut last: u32 = 0;
         for char in line.chars() {
@@ -94,7 +92,6 @@ pub fn part_two(input: &str) -> Option<u32> {
                 _ => {}
             }
         }
-        println!("{}{}", first, last);
         sum += first * 10 + last;
     }
 
