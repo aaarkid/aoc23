@@ -14,13 +14,11 @@ const MAX_GRAB: GrabBag = GrabBag {
     blue: 14,
 };
 
-
-
 pub fn part_one(input: &str) -> Option<u32> {
     let id_regex: Regex = Regex::new(r"Game (\d+):(.*)").unwrap();
     let grabs_regex: Regex = Regex::new(r"([\w\s,]*);").unwrap();
     let color_regex: Regex = Regex::new(r"\s(\d*)\s(\w*),").unwrap();
-    
+
     let mut sum: u32 = 0;
     'outer: for line in input.lines() {
         let line = line.to_string() + ";";
@@ -30,7 +28,11 @@ pub fn part_one(input: &str) -> Option<u32> {
         for cap in grabs_regex.captures_iter(&grabs) {
             let grab = cap[1].to_string();
             let grab = grab + ",";
-            let mut grab_bag = GrabBag { red: 0, green: 0, blue: 0 };
+            let mut grab_bag = GrabBag {
+                red: 0,
+                green: 0,
+                blue: 0,
+            };
             for cap in color_regex.captures_iter(&grab) {
                 let count = cap[1].parse::<u32>().unwrap();
                 let color = cap[2].to_string();
@@ -42,7 +44,10 @@ pub fn part_one(input: &str) -> Option<u32> {
                 }
             }
 
-            if grab_bag.red > MAX_GRAB.red || grab_bag.green > MAX_GRAB.green || grab_bag.blue > MAX_GRAB.blue {
+            if grab_bag.red > MAX_GRAB.red
+                || grab_bag.green > MAX_GRAB.green
+                || grab_bag.blue > MAX_GRAB.blue
+            {
                 continue 'outer;
             }
         }
@@ -56,13 +61,17 @@ pub fn part_two(input: &str) -> Option<u32> {
     let id_regex: Regex = Regex::new(r"Game (\d+):(.*)").unwrap();
     let grabs_regex: Regex = Regex::new(r"([\w\s,]*);").unwrap();
     let color_regex: Regex = Regex::new(r"\s(\d*)\s(\w*),").unwrap();
-    
+
     let mut sum: u32 = 0;
     for line in input.lines() {
         let line = line.to_string() + ";";
         let caps = id_regex.captures(&line).unwrap();
         let grabs = caps[2].to_string();
-        let mut bag: GrabBag = GrabBag { red: 0, green: 0, blue: 0 };
+        let mut bag: GrabBag = GrabBag {
+            red: 0,
+            green: 0,
+            blue: 0,
+        };
         for cap in grabs_regex.captures_iter(&grabs) {
             let grab = cap[1].to_string();
             let grab = grab + ",";
@@ -70,9 +79,27 @@ pub fn part_two(input: &str) -> Option<u32> {
                 let count = cap[1].parse::<u32>().unwrap();
                 let color = cap[2].to_string();
                 match color.as_str() {
-                    "red" => if bag.red > count {continue;} else {bag.red = count;},
-                    "green" => if bag.green > count {continue;} else {bag.green = count;},
-                    "blue" => if bag.blue > count {continue;} else {bag.blue = count;},
+                    "red" => {
+                        if bag.red > count {
+                            continue;
+                        } else {
+                            bag.red = count;
+                        }
+                    }
+                    "green" => {
+                        if bag.green > count {
+                            continue;
+                        } else {
+                            bag.green = count;
+                        }
+                    }
+                    "blue" => {
+                        if bag.blue > count {
+                            continue;
+                        } else {
+                            bag.blue = count;
+                        }
+                    }
                     _ => panic!("Unknown color: {}", color),
                 }
             }
@@ -90,13 +117,17 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let result = part_one(&advent_of_code::template::read_file_part("examples", DAY,1));
+        let result = part_one(&advent_of_code::template::read_file_part(
+            "examples", DAY, 1,
+        ));
         assert_eq!(result, Some(8));
     }
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file_part("examples", DAY,2));
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
         assert_eq!(result, Some(2286));
     }
 }

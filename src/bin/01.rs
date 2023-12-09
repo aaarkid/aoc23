@@ -27,9 +27,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-
-    fn find_word<'a>(line: &str, key: &str, value: &'a str) -> Vec<(usize, &'a str)>  
-    {
+    fn find_word<'a>(line: &str, key: &str, value: &'a str) -> Vec<(usize, &'a str)> {
         let mut positions: Vec<(usize, &str)> = Vec::new();
         if line.contains(key) {
             let mut start = 0;
@@ -43,17 +41,16 @@ pub fn part_two(input: &str) -> Option<u32> {
         positions
     }
 
-    
     fn find_numbers(line: &str, word_to_digit: &Vec<(&str, &str)>) -> String {
         let mut positions: Vec<(usize, &str)> = Vec::new();
         for (key, value) in word_to_digit {
-            positions.extend(find_word(line, key, value)); 
+            positions.extend(find_word(line, key, value));
         }
 
         positions.sort_by(|a, b| a.0.cmp(&b.0));
 
         let mut new_line: String = line.to_string();
-        let mut inc = 0; 
+        let mut inc = 0;
         for (pos, value) in positions {
             let pos = pos + inc;
             new_line.insert(pos, value.chars().next().unwrap());
@@ -106,13 +103,17 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let result = part_one(&advent_of_code::template::read_file_part("examples", DAY,1));
+        let result = part_one(&advent_of_code::template::read_file_part(
+            "examples", DAY, 1,
+        ));
         assert_eq!(result, Some(142));
     }
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file_part("examples", DAY,2));
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
         assert_eq!(result, Some(281));
     }
 }
